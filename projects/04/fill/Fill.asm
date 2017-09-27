@@ -11,41 +11,32 @@
 // "white" in every pixel;
 // the screen should remain fully clear as long as no key is pressed.
 
-// Put your code here.
-
-
 	@lc 		// Last char
 	M=0
-	@diff
-	M=0 
 	@color		// Will just contain which value to fill the screen with
 	M=0
 	@sp			// Screen pointer
 	M=0
 (LOOP)
-	@lc
+	@lc			
 	D=M
 	@KBD
-	D=D-M
+	D=D-M 
 	@UPDATE
-	D;JEQ
+	D;JEQ		// If the characters aren't different we can continue drawing
+	@SCREEN
+	D=A
 	@sp	
-	M=0
+	M=D
 	@KBD
 	D=M
-	@WHITE
-	D;JEQ
-	@BLACK
-	0;JMP
-(WHITE)
-	@color
-	M=0
 	@SETLC
-	0;JMP
+	D;JEQ		// If KBD is 0 then we can just just ignore setting black
 (BLACK)
-	@color
-	M=-1
+	D=-1
 (SETLC)
+	@color
+	M=D
 	@KBD
 	D=M
 	@lc
@@ -53,22 +44,16 @@
 (UPDATE)
 	@sp
 	D=M
-	@8192
+	@24576		// Hardcoded...gotta fix
 	D=D-A
 	@LOOP
-	D;JGE
+	D;JGE		// We are at the end, just keep checking for new keys
 	
-	@SCREEN
-	D=A
-	@sp
-	D=D+M
-	@cur
-	M=D
 	@color
 	D=M
-	@cur
+	@sp			// Get the address at sp location
 	A=M
-	M=D
+	M=D         // Then set the color for that screen location
 	@sp
 	M=M+1
 	@LOOP
