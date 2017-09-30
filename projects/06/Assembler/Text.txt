@@ -1,0 +1,9 @@
+@line3
+M=1
+AJ=M
+D=M+1
+0;JMP
+(line5)
+line4
+					line5
+					(hello)
