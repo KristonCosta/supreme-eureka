@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Assembler.h"
 #include "CommandType.h"
+#include "DestinationTypes.h"
 #include "Utils.h"
 
 Assembler::Assembler(std::string inputFile) {
@@ -20,9 +21,18 @@ bool Assembler::hasMoreCommands() {
 }
 
 void Assembler::advance() {
+	if (!hasMoreCommands()) {
+		throw std::out_of_range("Tried to advance past end of file.");
+	}
 	lineNum += 1;
 	std::getline(inStream, currentCommand);
 	trim(currentCommand);
+	if (currentCommand.length() <= 0) {
+		advance();
+	}
+	if (currentCommand.length() >= 2 && currentCommand.substr(0,2) == "//") {
+		advance();
+	}
 	if (currentCommand.front() == '@') {
 		commandType = CommandType::A_COMMAND;
 	}
@@ -68,19 +78,27 @@ void Assembler::parseCompCommand() {
 void Assembler::parseAssignment() { 
 	int equalsIndex = currentCommand.find("=");
 	std::string lhs = currentCommand.substr(0, equalsIndex);
-	parseVariable(lhs);
+	dest = parseVariable(lhs);
 	std::string rhs = currentCommand.substr(equalsIndex + 1, currentCommand.length());
 	std::cout << lhs << std::endl;
 	std::cout << rhs << std::endl;
 }
 
-void Assembler::parseVariable(std::string token) {
-	if (token.length() != 1) {
-		std::stringstream ss;
-		ss << "Invalid argument " << token << std::endl;
-		throw std::invalid_argument(ss.str());
+Destination Assembler::parseVariable(std::string token) {
+	if (token.length() == 1) {
+		if (token == "A") {
+			return A_DEST;
+		}
+		if (token == "D") {
+			return D_DEST;
+		}
+		if (token == "M") {
+			return M_DEST;
+		}
 	}
-
+	std::stringstream ss;
+	ss << "Invalid argument " << token << std::endl;
+	throw std::invalid_argument(ss.str());
 }
 
 void Assembler::parseJump() {}

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include "CommandType.h"
+#include "DestinationTypes.h"
 
 class Assembler
 {
@@ -17,7 +18,7 @@ private:
 	void parseCompCommand();
 	void parseAssignment();
 	void parseJump();
-	void parseVariable(std::string token);
+	Destination parseVariable(std::string token);
 public:
 	Assembler(std::string inputFile);
 	~Assembler();
